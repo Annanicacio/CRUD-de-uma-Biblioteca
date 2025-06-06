@@ -1,0 +1,1456 @@
+package com.acess;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import net.proteanit.sql.DbUtils;
+
+import java.awt.Font;
+import java.awt.Color;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JButton;
+import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.JTabbedPane;
+
+public class Aplicacao {
+
+	private JFrame frmGerenciamento;
+	private JTextField titulo;
+	private JTextField autor;
+	private JTextField editora;
+	private JTextField genero;
+	private JTextField ano;
+	private JTextField isbn;
+	private JTextField quantidade;
+	private JTable tableLivros;
+	private JTextField pesquisa;
+
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Aplicacao window = new Aplicacao();
+					window.frmGerenciamento.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	
+	
+	public Aplicacao() {
+		initialize();
+		tabela_rolagemLivros();
+		tabela_rolagemUsuarios();
+		tabela_rolagemFuncionario();
+		tabela_rolagemEmprestimo();
+	}
+	
+	Connection conn = null;
+	PreparedStatement pstm = null;
+	private JTextField textField;
+	private JTextField textField_1;
+	private JTextField textField_2;
+	private JTextField textField_3;
+	private JTextField textField_4;
+	private JTextField textField_5;
+	private JTextField textField_6;
+	private JTextField textField_7;
+	private JTextField pesquisaUsu;
+	private JTextField nomeUsu;
+	private JTextField emailUsu;
+	private JTextField cpfUsu;
+	private JTextField telefoneUsu;
+	private JTable tableUsuarios;
+	private JTextField nomeFun;
+	private JTextField cargoFun;
+	private JTextField loginFun;
+	private JTextField senhaFun;
+	private JTextField pesquisaFun;
+	private JTextField nomeEmp;
+	private JTextField dataEmp;
+	private JTextField devEmp;
+	private JTextField statusEmp;
+	private JTextField pesquisaEmp;
+	private JTable tableFuncionarios;
+	private JTable tableEmprestimos;
+	private JTextField IDdev;
+	private JTextField diadevEmp;
+	
+	public void tabela_rolagemLivros() {
+			
+		ResultSet rst = null;
+		
+		String sql = "SELECT * FROM livros ";
+		
+		try {
+			conn = DBconnection.ConexaoBD();
+				
+			pstm = (PreparedStatement) conn.prepareStatement(sql);
+			
+			rst = pstm.executeQuery(sql);
+			
+			tableLivros.setModel(DbUtils.resultSetToTableModel(rst));
+			
+			
+			
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			
+		}
+	}
+	
+
+
+	
+	public void tabela_rolagemUsuarios() {
+		
+		ResultSet rst = null;
+		
+		String sql = "SELECT * FROM usuarios";
+		try {
+			conn = DBconnection.ConexaoBD();
+				
+			pstm = (PreparedStatement) conn.prepareStatement(sql);
+			
+			rst = pstm.executeQuery(sql);
+			
+			tableUsuarios.setModel(DbUtils.resultSetToTableModel(rst));
+			
+			
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			
+		}
+	}
+	
+	public void tabela_rolagemFuncionario() {
+		
+		ResultSet rst = null;
+		
+		String sql = "SELECT * FROM funcionarios";
+		
+		try {
+			conn = DBconnection.ConexaoBD();
+				
+			pstm = (PreparedStatement) conn.prepareStatement(sql);
+			
+			rst = pstm.executeQuery(sql);
+			
+			tableFuncionarios.setModel(DbUtils.resultSetToTableModel(rst));
+			
+			
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			
+		}
+	}
+	
+	public void tabela_rolagemEmprestimo() {
+		
+		ResultSet rst = null;
+		
+		String sql = "SELECT usuarios.nome, emprestimos.data_emprestimo, emprestimos.data_devolucao, " +
+                "emprestimos.status_emprestimo, emprestimos.dia_devolvido " +
+                "FROM emprestimos " +
+                "JOIN usuarios ON emprestimos.id_usuario = usuarios.id ";
+
+		try {
+			conn = DBconnection.ConexaoBD();
+				
+			pstm = (PreparedStatement) conn.prepareStatement(sql);
+			
+			rst = pstm.executeQuery(sql);
+			
+			tableEmprestimos.setModel(DbUtils.resultSetToTableModel(rst));
+			
+			
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			
+		}
+	}
+	
+	
+	
+	
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frmGerenciamento = new JFrame();
+		frmGerenciamento.setTitle("Gerenciamento ");
+		frmGerenciamento.setBounds(100, 100, 904, 664);
+		frmGerenciamento.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmGerenciamento.getContentPane().setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("LIVRARIA");
+		lblNewLabel.setForeground(new Color(128, 128, 192));
+		lblNewLabel.setFont(new Font("Dutch801 XBd BT", Font.BOLD, 30));
+		lblNewLabel.setBounds(345, -11, 189, 58);
+		frmGerenciamento.getContentPane().add(lblNewLabel);
+		
+		JLabel lblLocaesDeLivros = new JLabel("LOCAÇÕES DE LIVROS");
+		lblLocaesDeLivros.setForeground(new Color(0, 0, 0));
+		lblLocaesDeLivros.setFont(new Font("ItalicT", Font.ITALIC, 30));
+		lblLocaesDeLivros.setBounds(230, 26, 459, 58);
+		frmGerenciamento.getContentPane().add(lblLocaesDeLivros);
+		
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.setBounds(10, 78, 868, 493);
+		frmGerenciamento.getContentPane().add(tabbedPane);
+		
+		JPanel PainelLivros = new JPanel();
+		tabbedPane.addTab("Livros", null, PainelLivros, null);
+		PainelLivros.setLayout(null);
+		
+		
+		
+		JPanel panelPesquisa = new JPanel();
+		panelPesquisa.setBounds(10, 11, 294, 87);
+		PainelLivros.add(panelPesquisa);
+		panelPesquisa.setBackground(new Color(128, 128, 192));
+		panelPesquisa.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Pesquisa    ", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		panelPesquisa.setLayout(null);
+		
+		JLabel L_Pesquisa = new JLabel("Buscar");
+		L_Pesquisa.setBounds(10, 24, 50, 17);
+		L_Pesquisa.setForeground(new Color(64, 0, 64));
+		L_Pesquisa.setFont(new Font("Arial", Font.BOLD, 14));
+		panelPesquisa.add(L_Pesquisa);
+		
+		pesquisa = new JTextField();
+		pesquisa.setBounds(70, 24, 214, 19);
+		pesquisa.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+			
+				}
+			
+		});
+		pesquisa.setColumns(10);
+		panelPesquisa.add(pesquisa);
+		
+		JButton btnPesquisar = new JButton("Pesquisar");
+		btnPesquisar.setBounds(70, 51, 109, 21);
+		btnPesquisar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String id = pesquisa.getText();
+				
+				
+				//data_emprestimo, data_devolucao, status_emprestimo, dia_devolvido
+				try {
+					pstm = conn.prepareStatement("SELECT titulo, autor, editora, genero, ano, isbn, quantidade_disponivel FROM livros WHERE id = ?");
+					pstm.setString(1, id);
+					ResultSet rst = pstm.executeQuery();
+					tabela_rolagemLivros();
+					
+					if(rst.next() == true) {
+						String vTitulo = rst.getString(1);
+						String vAutor = rst.getString(2);
+						String vEditora = rst.getString(3);
+						String vGenero = rst.getString(4);
+						String vAno = rst.getString(5);
+						String vISBN = rst.getString(6);
+						String vQuantidade = rst.getString(7);
+						
+						titulo.setText(vTitulo);
+						autor.setText(vAutor);
+						editora.setText(vEditora);
+						genero.setText(vGenero);
+						ano.setText(vAno);
+						isbn.setText(vISBN);
+						quantidade.setText(vQuantidade);
+					
+					} else {
+						titulo.setText("");
+						autor.setText("");
+						editora.setText("");
+						genero.setText("");
+						ano.setText("");
+						isbn.setText("");
+						quantidade.setText("");
+					}
+					
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		panelPesquisa.add(btnPesquisar);
+		
+		JButton btnExcluir = new JButton("Excluir");
+		btnExcluir.setBounds(189, 51, 95, 21);
+		panelPesquisa.add(btnExcluir);
+		
+		JPanel painelData = new JPanel();
+		painelData.setBounds(10, 109, 294, 336);
+		PainelLivros.add(painelData);
+		painelData.setBackground(new Color(128, 128, 192));
+		painelData.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Dados de registro   ", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		painelData.setLayout(null);
+		
+		JLabel L_Titulo = new JLabel("Título");
+		L_Titulo.setForeground(new Color(64, 0, 64));
+		L_Titulo.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Titulo.setBounds(10, 30, 118, 23);
+		painelData.add(L_Titulo);
+		
+		JLabel L_Autor = new JLabel("Autor");
+		L_Autor.setForeground(new Color(64, 0, 64));
+		L_Autor.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Autor.setBounds(10, 63, 118, 23);
+		painelData.add(L_Autor);
+		
+		titulo = new JTextField();
+		titulo.setColumns(10);
+		titulo.setBounds(116, 33, 96, 19);
+		painelData.add(titulo);
+		
+		autor = new JTextField();
+		autor.setColumns(10);
+		autor.setBounds(116, 66, 96, 19);
+		painelData.add(autor);
+		
+		JLabel L_Editora = new JLabel("Editora");
+		L_Editora.setForeground(new Color(64, 0, 64));
+		L_Editora.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Editora.setBounds(10, 96, 118, 23);
+		painelData.add(L_Editora);
+		
+		editora = new JTextField();
+		editora.setColumns(10);
+		editora.setBounds(116, 99, 96, 19);
+		painelData.add(editora);
+		
+		JLabel L_Genero = new JLabel("Genero");
+		L_Genero.setForeground(new Color(64, 0, 64));
+		L_Genero.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Genero.setBounds(10, 129, 118, 23);
+		painelData.add(L_Genero);
+		
+		genero = new JTextField();
+		genero.setColumns(10);
+		genero.setBounds(116, 132, 96, 19);
+		painelData.add(genero);
+		
+		JLabel L_Ano = new JLabel("Ano");
+		L_Ano.setForeground(new Color(64, 0, 64));
+		L_Ano.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Ano.setBounds(10, 162, 118, 23);
+		painelData.add(L_Ano);
+		
+		ano = new JTextField();
+		ano.setColumns(10);
+		ano.setBounds(116, 165, 96, 19);
+		painelData.add(ano);
+		
+		JLabel L_isbn = new JLabel("ISBN");
+		L_isbn.setForeground(new Color(64, 0, 64));
+		L_isbn.setFont(new Font("Arial", Font.BOLD, 14));
+		L_isbn.setBounds(10, 195, 118, 23);
+		painelData.add(L_isbn);
+		
+		isbn = new JTextField();
+		isbn.setColumns(10);
+		isbn.setBounds(116, 198, 96, 19);
+		painelData.add(isbn);
+		
+		JLabel L_Quantidade = new JLabel("Quantidade");
+		L_Quantidade.setForeground(new Color(64, 0, 64));
+		L_Quantidade.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Quantidade.setBounds(10, 228, 118, 23);
+		painelData.add(L_Quantidade);
+		
+		quantidade = new JTextField();
+		quantidade.setColumns(10);
+		quantidade.setBounds(116, 231, 96, 19);
+		painelData.add(quantidade);
+		
+		JButton btnSalvar = new JButton("Salvar");
+		btnSalvar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				String vTitulo, vAutor, vEditora, vGenero, vISBN;
+				int vAno, vQuantidade;
+				
+				String sql = "INSERT INTO livros(titulo, autor, editora, genero, ano, isbn, quantidade_disponivel) VALUES(?,?,?,?,?,?,?)";
+				
+				vTitulo = titulo.getText();
+				vAutor = autor.getText();
+				vEditora = editora.getText();
+				vGenero = genero.getText();
+				vAno = Integer.parseInt(ano.getText());
+				vISBN = isbn.getText();
+				vQuantidade = Integer.parseInt(quantidade.getText());
+				
+				try {
+					conn = DBconnection.ConexaoBD();
+					pstm = (PreparedStatement) conn.prepareStatement(sql);
+					
+					pstm.setString(1, vTitulo);
+					pstm.setString(2, vAutor);
+					pstm.setString(3, vEditora);
+					pstm.setString(4, vGenero);
+					pstm.setInt(5, vAno);
+					pstm.setString(6, vISBN);
+					pstm.setInt(7, vQuantidade);
+					
+					
+					pstm.execute();
+					tabela_rolagemLivros();
+					
+					JOptionPane.showInternalMessageDialog(null, "Livro salvo com sucesso! ! !");
+				
+					titulo.setText("");
+					autor.setText("");
+					editora.setText("");
+					genero.setText("");
+					ano.setText("");
+					isbn.setText("");
+					quantidade.setText("");
+					
+				} catch (Exception exception) {
+
+					JOptionPane.showMessageDialog(null, exception);
+					
+				}
+			}
+		});
+		btnSalvar.setBounds(10, 287, 85, 21);
+		painelData.add(btnSalvar);
+		
+		JButton btnZerar = new JButton("Zerar");
+		btnZerar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				pesquisa.setText(null);
+				titulo.setText(null);
+				autor.setText(null);
+				editora.setText(null);
+				genero.setText(null);
+				ano.setText(null);
+				isbn.setText(null);
+				quantidade.setText(null);
+
+			}
+		});
+		btnZerar.setBounds(104, 286, 85, 21);
+		painelData.add(btnZerar);
+		
+		JButton btnEditar = new JButton("Editar");
+		btnEditar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				String vTitulo, vAutor, vEditora, vGenero, vISBN, vId;
+				int vAno, vQuantidade;
+				
+				String sql = "UPDATE livros SET titulo=?, autor=?, editora=?, genero=?, ano=?, isbn=?, quantidade_disponivel=? WHERE id=?";
+				
+				vId = pesquisa.getText();
+				vTitulo = titulo.getText();
+				vAutor = autor.getText();
+				vEditora = editora.getText();
+				vGenero = genero.getText();
+				vAno = Integer.parseInt(ano.getText());
+				vISBN = isbn.getText();
+				vQuantidade = Integer.parseInt(quantidade.getText());
+				
+				try {
+					conn = DBconnection.ConexaoBD();
+					pstm = (PreparedStatement) conn.prepareStatement(sql);
+					
+					pstm.setString(1, vTitulo);
+					pstm.setString(2, vAutor);
+					pstm.setString(3, vEditora);
+					pstm.setString(4, vGenero);
+					pstm.setInt(5, vAno);
+					pstm.setString(6, vISBN);
+					pstm.setInt(7, vQuantidade);
+					pstm.setString(8, vId);
+					
+					pstm.execute();
+					tabela_rolagemLivros();
+					
+					JOptionPane.showInternalMessageDialog(null, "Livro editado com sucesso! ! !");
+				
+					titulo.setText("");
+					autor.setText("");
+					editora.setText("");
+					genero.setText("");
+					ano.setText("");
+					isbn.setText("");
+					quantidade.setText("");
+					
+				} catch (Exception exception) {
+
+					JOptionPane.showMessageDialog(null, exception);
+					
+				} 	
+			}		
+		});
+		
+		btnEditar.setBounds(199, 287, 85, 21);
+		painelData.add(btnEditar);
+		
+		JPanel panelDB = new JPanel();
+		panelDB.setBounds(314, 11, 539, 433);
+		PainelLivros.add(panelDB);
+		panelDB.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Banco de Dados    ", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		panelDB.setBackground(new Color(128, 128, 192));
+		panelDB.setLayout(null);
+		
+		JScrollPane scroolPageLivros = new JScrollPane();
+		scroolPageLivros.setBounds(35, 26, 469, 382);
+		panelDB.add(scroolPageLivros);
+		
+		tableLivros = new JTable();
+		scroolPageLivros.setViewportView(tableLivros);
+		
+		JPanel panel_3 = new JPanel();
+		tabbedPane.addTab("Usuários", null, panel_3, null);
+		panel_3.setLayout(null);
+		
+		JPanel PainelLivros_1 = new JPanel();
+		PainelLivros_1.setBounds(431, 5, 1, 1);
+		PainelLivros_1.setLayout(null);
+		panel_3.add(PainelLivros_1);
+		
+		JPanel panelPesquisa_1 = new JPanel();
+		panelPesquisa_1.setLayout(null);
+		panelPesquisa_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Pesquisa    ", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		panelPesquisa_1.setBackground(new Color(128, 128, 192));
+		panelPesquisa_1.setBounds(10, 11, 294, 87);
+		PainelLivros_1.add(panelPesquisa_1);
+		
+		JLabel L_Pesquisa_1 = new JLabel("Buscar");
+		L_Pesquisa_1.setForeground(new Color(64, 0, 64));
+		L_Pesquisa_1.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Pesquisa_1.setBounds(10, 24, 50, 17);
+		panelPesquisa_1.add(L_Pesquisa_1);
+		
+		textField = new JTextField();
+		textField.setColumns(10);
+		textField.setBounds(70, 24, 214, 19);
+		panelPesquisa_1.add(textField);
+		
+		JButton btnPesquisar_1 = new JButton("Pesquisar");
+		btnPesquisar_1.setBounds(70, 51, 109, 21);
+		panelPesquisa_1.add(btnPesquisar_1);
+		
+		JButton btnExcluir_1 = new JButton("Excluir");
+		btnExcluir_1.setBounds(189, 51, 95, 21);
+		panelPesquisa_1.add(btnExcluir_1);
+		
+		JPanel painelData_1 = new JPanel();
+		painelData_1.setLayout(null);
+		painelData_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Dados de registro   ", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		painelData_1.setBackground(new Color(128, 128, 192));
+		painelData_1.setBounds(10, 109, 294, 336);
+		PainelLivros_1.add(painelData_1);
+		
+		JLabel L_Titulo_1 = new JLabel("Título");
+		L_Titulo_1.setForeground(new Color(64, 0, 64));
+		L_Titulo_1.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Titulo_1.setBounds(10, 30, 118, 23);
+		painelData_1.add(L_Titulo_1);
+		
+		JLabel L_Autor_1 = new JLabel("Autor");
+		L_Autor_1.setForeground(new Color(64, 0, 64));
+		L_Autor_1.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Autor_1.setBounds(10, 63, 118, 23);
+		painelData_1.add(L_Autor_1);
+		
+		textField_1 = new JTextField();
+		textField_1.setColumns(10);
+		textField_1.setBounds(116, 33, 96, 19);
+		painelData_1.add(textField_1);
+		
+		textField_2 = new JTextField();
+		textField_2.setColumns(10);
+		textField_2.setBounds(116, 66, 96, 19);
+		painelData_1.add(textField_2);
+		
+		JLabel L_Editora_1 = new JLabel("Editora");
+		L_Editora_1.setForeground(new Color(64, 0, 64));
+		L_Editora_1.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Editora_1.setBounds(10, 96, 118, 23);
+		painelData_1.add(L_Editora_1);
+		
+		textField_3 = new JTextField();
+		textField_3.setColumns(10);
+		textField_3.setBounds(116, 99, 96, 19);
+		painelData_1.add(textField_3);
+		
+		JLabel L_Genero_1 = new JLabel("Genero");
+		L_Genero_1.setForeground(new Color(64, 0, 64));
+		L_Genero_1.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Genero_1.setBounds(10, 129, 118, 23);
+		painelData_1.add(L_Genero_1);
+		
+		textField_4 = new JTextField();
+		textField_4.setColumns(10);
+		textField_4.setBounds(116, 132, 96, 19);
+		painelData_1.add(textField_4);
+		
+		JLabel L_Ano_1 = new JLabel("Ano");
+		L_Ano_1.setForeground(new Color(64, 0, 64));
+		L_Ano_1.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Ano_1.setBounds(10, 162, 118, 23);
+		painelData_1.add(L_Ano_1);
+		
+		textField_5 = new JTextField();
+		textField_5.setColumns(10);
+		textField_5.setBounds(116, 165, 96, 19);
+		painelData_1.add(textField_5);
+		
+		JLabel L_isbn_1 = new JLabel("ISBN");
+		L_isbn_1.setForeground(new Color(64, 0, 64));
+		L_isbn_1.setFont(new Font("Arial", Font.BOLD, 14));
+		L_isbn_1.setBounds(10, 195, 118, 23);
+		painelData_1.add(L_isbn_1);
+		
+		textField_6 = new JTextField();
+		textField_6.setColumns(10);
+		textField_6.setBounds(116, 198, 96, 19);
+		painelData_1.add(textField_6);
+		
+		JLabel L_Quantidade_1 = new JLabel("Quantidade");
+		L_Quantidade_1.setForeground(new Color(64, 0, 64));
+		L_Quantidade_1.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Quantidade_1.setBounds(10, 228, 118, 23);
+		painelData_1.add(L_Quantidade_1);
+		
+		textField_7 = new JTextField();
+		textField_7.setColumns(10);
+		textField_7.setBounds(116, 231, 96, 19);
+		painelData_1.add(textField_7);
+		
+		JButton btnSalvar_1 = new JButton("Salvar");
+		btnSalvar_1.setBounds(10, 287, 85, 21);
+		painelData_1.add(btnSalvar_1);
+		
+		JButton btnZerar_1 = new JButton("Zerar");
+		btnZerar_1.setBounds(104, 286, 85, 21);
+		painelData_1.add(btnZerar_1);
+		
+		JButton btnEditar_1 = new JButton("Editar");
+		btnEditar_1.setBounds(199, 287, 85, 21);
+		painelData_1.add(btnEditar_1);
+		
+		JPanel panelDB_1 = new JPanel();
+		panelDB_1.setLayout(null);
+		panelDB_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Banco de Dados    ", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		panelDB_1.setBackground(new Color(128, 128, 192));
+		panelDB_1.setBounds(314, 11, 539, 433);
+		PainelLivros_1.add(panelDB_1);
+		
+		JScrollPane scroolPageLivros_1 = new JScrollPane();
+		scroolPageLivros_1.setBounds(35, 26, 469, 382);
+		panelDB_1.add(scroolPageLivros_1);
+		
+		JPanel panelPesquisa_2 = new JPanel();
+		panelPesquisa_2.setLayout(null);
+		panelPesquisa_2.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Pesquisa    ", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		panelPesquisa_2.setBackground(new Color(128, 128, 192));
+		panelPesquisa_2.setBounds(10, 11, 294, 87);
+		panel_3.add(panelPesquisa_2);
+		
+		JLabel L_Pesquisa_2 = new JLabel("Buscar");
+		L_Pesquisa_2.setForeground(new Color(64, 0, 64));
+		L_Pesquisa_2.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Pesquisa_2.setBounds(10, 24, 50, 17);
+		panelPesquisa_2.add(L_Pesquisa_2);
+		
+		pesquisaUsu = new JTextField();
+		pesquisaUsu.setColumns(10);
+		pesquisaUsu.setBounds(70, 24, 214, 19);
+		panelPesquisa_2.add(pesquisaUsu);
+		
+		JButton btnPesquisarUsu = new JButton("Pesquisar");
+		btnPesquisarUsu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String id = pesquisaUsu.getText();
+				
+				String vNome, vEmail, vCPF, vTelefone;
+				
+				try {
+					pstm = conn.prepareStatement("SELECT nome, email, cpf, telefone FROM usuarios WHERE id = ?");
+					pstm.setString(1, id);
+					ResultSet rst = pstm.executeQuery();
+					tabela_rolagemUsuarios();
+					
+					if(rst.next() == true) {
+						vNome = rst.getString(1);
+						vEmail = rst.getString(2);
+						vCPF = rst.getString(3);
+						vTelefone = rst.getString(4);
+
+						
+						nomeUsu.setText(vNome);
+						emailUsu.setText(vEmail);
+						cpfUsu.setText(vCPF);
+						telefoneUsu.setText(vTelefone);
+
+					
+					} else {
+						emailUsu.setText("");
+						cpfUsu.setText("");
+						telefoneUsu.setText("");
+						telefoneUsu.setText("");
+
+					}
+					
+				} catch (Exception exception) {
+					// TODO Auto-generated catch block
+					exception.printStackTrace();
+				}
+			}
+		});
+		btnPesquisarUsu.setBounds(70, 51, 109, 21);
+		panelPesquisa_2.add(btnPesquisarUsu);
+		
+		JButton btnExcluirUsu = new JButton("Excluir");
+		btnExcluirUsu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+					
+					String id = pesquisaUsu.getText();
+					
+					try {
+						pstm = conn.prepareStatement("DELETE FROM usuarios WHERE id = ?");
+						pstm.setString(1, id);
+						
+						pstm.execute();
+						
+						nomeUsu.setText("");
+						emailUsu.setText("");
+						cpfUsu.setText("");
+						telefoneUsu.setText("");
+						
+						tabela_rolagemUsuarios();
+						
+						} catch (Exception Exception) {
+						// TODO Auto-generated catch block
+							Exception.printStackTrace();
+					}
+				}
+		});
+		
+		btnExcluirUsu.setBounds(189, 51, 95, 21);
+		panelPesquisa_2.add(btnExcluirUsu);
+		
+		JPanel painelData_2 = new JPanel();
+		painelData_2.setLayout(null);
+		painelData_2.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Dados de registro   ", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		painelData_2.setBackground(new Color(128, 128, 192));
+		painelData_2.setBounds(10, 109, 294, 336);
+		panel_3.add(painelData_2);
+		
+		JLabel L_NomeUsu = new JLabel("Nome");
+		L_NomeUsu.setForeground(new Color(64, 0, 64));
+		L_NomeUsu.setFont(new Font("Arial", Font.BOLD, 14));
+		L_NomeUsu.setBounds(10, 30, 118, 23);
+		painelData_2.add(L_NomeUsu);
+		
+		JLabel L_NomeUser = new JLabel("Email ");
+		L_NomeUser.setForeground(new Color(64, 0, 64));
+		L_NomeUser.setFont(new Font("Arial", Font.BOLD, 14));
+		L_NomeUser.setBounds(10, 63, 118, 23);
+		painelData_2.add(L_NomeUser);
+		
+		nomeUsu = new JTextField();
+		nomeUsu.setColumns(10);
+		nomeUsu.setBounds(116, 33, 96, 19);
+		painelData_2.add(nomeUsu);
+		
+		emailUsu = new JTextField();
+		emailUsu.setColumns(10);
+		emailUsu.setBounds(116, 66, 96, 19);
+		painelData_2.add(emailUsu);
+		
+		JLabel L_CPFSUsu = new JLabel("CPF");
+		L_CPFSUsu.setForeground(new Color(64, 0, 64));
+		L_CPFSUsu.setFont(new Font("Arial", Font.BOLD, 14));
+		L_CPFSUsu.setBounds(10, 96, 118, 23);
+		painelData_2.add(L_CPFSUsu);
+		
+		cpfUsu = new JTextField();
+		cpfUsu.setColumns(10);
+		cpfUsu.setBounds(116, 99, 96, 19);
+		painelData_2.add(cpfUsu);
+		
+		JLabel L_CPFUsu = new JLabel("telefone");
+		L_CPFUsu.setForeground(new Color(64, 0, 64));
+		L_CPFUsu.setFont(new Font("Arial", Font.BOLD, 14));
+		L_CPFUsu.setBounds(10, 129, 118, 23);
+		painelData_2.add(L_CPFUsu);
+		
+		telefoneUsu = new JTextField();
+		telefoneUsu.setColumns(10);
+		telefoneUsu.setBounds(116, 131, 96, 19);
+		painelData_2.add(telefoneUsu);
+		
+		JButton btnSalvarUsu = new JButton("Salvar");
+		btnSalvarUsu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				String vNome, vEmail,vCPF,vTelefone;
+				
+				String sql = "INSERT INTO usuarios(nome, email, cpf, telefone) VALUES(?,?,?,?)";
+				
+				vNome = nomeUsu.getText();
+				vEmail = emailUsu.getText();
+				vCPF = cpfUsu.getText();
+				vTelefone = telefoneUsu.getText();
+
+				
+				try {
+					conn = DBconnection.ConexaoBD();
+					pstm = (PreparedStatement) conn.prepareStatement(sql);
+					
+					pstm.setString(1, vNome);
+					pstm.setString(2, vEmail);
+					pstm.setString(3, vCPF);
+					pstm.setString(4, vTelefone);
+					
+					
+					pstm.execute();
+					tabela_rolagemUsuarios();
+					
+					JOptionPane.showInternalMessageDialog(null, "Usuário salvo com sucesso! ! !");
+				
+					emailUsu.setText("");
+					cpfUsu.setText("");
+					telefoneUsu.setText("");
+					telefoneUsu.setText("");
+					
+				} catch (Exception exception) {
+					JOptionPane.showMessageDialog(null, exception);
+					
+				}
+			}
+		});
+		btnSalvarUsu.setBounds(10, 287, 85, 21);
+		painelData_2.add(btnSalvarUsu);
+		
+		JButton btnZerarUsu = new JButton("Zerar");
+		btnZerarUsu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				pesquisaUsu.setText("");
+				nomeUsu.setText("");
+				emailUsu.setText("");
+				cpfUsu.setText("");
+				telefoneUsu.setText("");
+				telefoneUsu.setText("");
+				
+			}
+		});
+		btnZerarUsu.setBounds(104, 286, 85, 21);
+		painelData_2.add(btnZerarUsu);
+		
+		JButton btnEditarUsu = new JButton("Editar");
+		btnEditarUsu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				String id = pesquisaUsu.getText();
+				
+				String vNome,vEmail, vCPF, vTelefone;
+				
+				String sql = "UPDATE usuarios SET nome = ?, email = ?, cpf = ?, telefone = ? WHERE id=?";
+				
+				vNome = nomeUsu.getText();
+				vEmail = emailUsu.getText();
+				vCPF = cpfUsu.getText();
+				vTelefone = telefoneUsu.getText();
+
+				
+				try {
+					conn = DBconnection.ConexaoBD();
+					pstm = (PreparedStatement) conn.prepareStatement(sql);
+					
+					pstm.setString(1, vNome);
+					pstm.setString(2, vEmail);
+					pstm.setString(3, vCPF);
+					pstm.setString(4, vTelefone);
+					pstm.setString(5, id);
+					
+					pstm.execute();
+					tabela_rolagemUsuarios();
+					
+					JOptionPane.showInternalMessageDialog(null, "Usuários editado com sucesso! ! !");
+				
+					nomeUsu.setText("");
+					emailUsu.setText("");
+					cpfUsu.setText("");
+					telefoneUsu.setText("");
+					
+				} catch (Exception exception) {
+
+					JOptionPane.showMessageDialog(null, exception);
+					
+				} 	
+			}		
+		});
+		btnEditarUsu.setBounds(199, 287, 85, 21);
+		painelData_2.add(btnEditarUsu);
+		
+		JPanel panelDB_2 = new JPanel();
+		panelDB_2.setLayout(null);
+		panelDB_2.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Banco de Dados    ", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		panelDB_2.setBackground(new Color(128, 128, 192));
+		panelDB_2.setBounds(314, 11, 539, 433);
+		panel_3.add(panelDB_2);
+		
+		JScrollPane scrollPaneUsuarios = new JScrollPane();
+		scrollPaneUsuarios.setBounds(32, 31, 478, 368);
+		panelDB_2.add(scrollPaneUsuarios);
+		
+		tableUsuarios = new JTable();
+		scrollPaneUsuarios.setViewportView(tableUsuarios);
+		
+		JPanel panel = new JPanel();
+		tabbedPane.addTab("Funcionários", null, panel, null);
+		panel.setLayout(null);
+		
+		JPanel painelData_3 = new JPanel();
+		painelData_3.setLayout(null);
+		painelData_3.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Dados de registro   ", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		painelData_3.setBackground(new Color(128, 128, 192));
+		painelData_3.setBounds(10, 109, 294, 336);
+		panel.add(painelData_3);
+		
+		JLabel L_NomeFun = new JLabel("Nome");
+		L_NomeFun.setForeground(new Color(64, 0, 64));
+		L_NomeFun.setFont(new Font("Arial", Font.BOLD, 14));
+		L_NomeFun.setBounds(10, 30, 118, 23);
+		painelData_3.add(L_NomeFun);
+		
+		nomeFun = new JTextField();
+		nomeFun.setColumns(10);
+		nomeFun.setBounds(116, 33, 96, 19);
+		painelData_3.add(nomeFun);
+		
+		JLabel L_CargoFun = new JLabel("Cargo");
+		L_CargoFun.setForeground(new Color(64, 0, 64));
+		L_CargoFun.setFont(new Font("Arial", Font.BOLD, 14));
+		L_CargoFun.setBounds(10, 63, 118, 23);
+		painelData_3.add(L_CargoFun);
+		
+		cargoFun = new JTextField();
+		cargoFun.setColumns(10);
+		cargoFun.setBounds(116, 66, 96, 19);
+		painelData_3.add(cargoFun);
+		
+		JLabel L_LoginFun = new JLabel("Login");
+		L_LoginFun.setForeground(new Color(64, 0, 64));
+		L_LoginFun.setFont(new Font("Arial", Font.BOLD, 14));
+		L_LoginFun.setBounds(10, 96, 118, 23);
+		painelData_3.add(L_LoginFun);
+		
+		loginFun = new JTextField();
+		loginFun.setColumns(10);
+		loginFun.setBounds(116, 99, 96, 19);
+		painelData_3.add(loginFun);
+		
+		JLabel L_SenhaFun = new JLabel("Senha");
+		L_SenhaFun.setForeground(new Color(64, 0, 64));
+		L_SenhaFun.setFont(new Font("Arial", Font.BOLD, 14));
+		L_SenhaFun.setBounds(10, 129, 118, 23);
+		painelData_3.add(L_SenhaFun);
+		
+		senhaFun = new JTextField();
+		senhaFun.setColumns(10);
+		senhaFun.setBounds(116, 132, 96, 19);
+		painelData_3.add(senhaFun);
+		
+		JButton btnSalvarFun = new JButton("Salvar");
+		btnSalvarFun.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String vNome, vCargo, vLogin, vSenha;
+
+				
+				String sql = "INSERT INTO funcionarios(nome_funcionario, cargo_funcionario, login, senha) VALUES(?,?,?,?)";
+				
+				vNome = nomeFun.getText();
+				vCargo = cargoFun.getText();
+				vLogin = loginFun.getText();
+				vSenha = senhaFun.getText();
+				
+				try {
+					conn = DBconnection.ConexaoBD();
+					pstm = (PreparedStatement) conn.prepareStatement(sql);
+					
+					pstm.setString(1, vNome);
+					pstm.setString(2, vCargo);
+					pstm.setString(3, vLogin);
+					pstm.setString(4, vSenha);
+					
+					pstm.execute();
+					tabela_rolagemFuncionario();
+					
+					JOptionPane.showInternalMessageDialog(null, "Livro salvo com sucesso! ! !");
+				
+					nomeFun.setText("");
+					cargoFun.setText("");
+					loginFun.setText("");
+					senhaFun.setText("");
+					
+				} catch (Exception exception) {
+					JOptionPane.showMessageDialog(null, exception);
+					
+				}
+			}
+		});
+		btnSalvarFun.setBounds(10, 287, 85, 21);
+		painelData_3.add(btnSalvarFun);
+		
+		JButton btnZerarFun = new JButton("Zerar");
+		btnZerarFun.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				pesquisaFun.setText("");
+				nomeFun.setText("");
+				cargoFun.setText("");
+				loginFun.setText("");
+				senhaFun.setText("");
+			}
+		});
+		btnZerarFun.setBounds(104, 286, 85, 21);
+		painelData_3.add(btnZerarFun);
+		
+		JButton btnEditarFun = new JButton("Editar");
+		btnEditarFun.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				String id = pesquisaFun.getText();
+				
+				String vNome, vCargo, vLogin, vSenha;
+				
+				String sql = "UPDATE funcionarios SET nome_funcionario = ?, cargo_funcionario = ?, login = ?, senha = ? WHERE id=?";
+				
+				vNome = nomeFun.getText();
+				vCargo = cargoFun.getText();
+				vLogin = loginFun.getText();
+				vSenha = senhaFun.getText();
+				
+				try {
+					conn = DBconnection.ConexaoBD();
+					pstm = (PreparedStatement) conn.prepareStatement(sql);
+					
+					pstm.setString(1, vNome);
+					pstm.setString(2, vCargo);
+					pstm.setString(3, vLogin);
+					pstm.setString(4, vSenha);
+					pstm.setString(5, id);
+
+					
+					pstm.execute();
+					tabela_rolagemFuncionario();
+					
+					JOptionPane.showInternalMessageDialog(null, "Funcionario editado com sucesso! ! !");
+				
+					nomeFun.setText("");
+					cargoFun.setText("");
+					loginFun.setText("");
+					senhaFun.setText("");
+					pesquisaFun.setText("");
+
+					
+				} catch (Exception exception) {
+					JOptionPane.showMessageDialog(null, exception);
+					
+				} 	
+			}
+		});
+		btnEditarFun.setBounds(199, 287, 85, 21);
+		painelData_3.add(btnEditarFun);
+		
+		JPanel panelPesquisa_3 = new JPanel();
+		panelPesquisa_3.setLayout(null);
+		panelPesquisa_3.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Pesquisa    ", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		panelPesquisa_3.setBackground(new Color(128, 128, 192));
+		panelPesquisa_3.setBounds(10, 11, 294, 87);
+		panel.add(panelPesquisa_3);
+		
+		JLabel L_Pesquisa_3 = new JLabel("Buscar");
+		L_Pesquisa_3.setForeground(new Color(64, 0, 64));
+		L_Pesquisa_3.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Pesquisa_3.setBounds(10, 24, 50, 17);
+		panelPesquisa_3.add(L_Pesquisa_3);
+		
+		pesquisaFun = new JTextField();
+		pesquisaFun.setColumns(10);
+		pesquisaFun.setBounds(70, 24, 214, 19);
+		panelPesquisa_3.add(pesquisaFun);
+		
+		JButton btnPesquisarFun = new JButton("Pesquisar");
+		btnPesquisarFun.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String id = pesquisaFun.getText();
+				
+				String vNome, vCargo, vLogin, vSenha;
+				
+				try {
+					pstm = conn.prepareStatement("SELECT nome_funcionario, cargo_funcionario, login, senha FROM funcionarios WHERE id = ?");
+					pstm.setString(1, id);
+					ResultSet rst = pstm.executeQuery();
+					
+					tabela_rolagemFuncionario();
+					
+					if(rst.next() == true) {
+						vNome = rst.getString(1);
+						vCargo = rst.getString(2);
+						vLogin = rst.getString(3);
+						vSenha = rst.getString(4);
+
+						
+						nomeFun.setText(vNome);
+						cargoFun.setText(vCargo);
+						loginFun.setText(vLogin);
+						senhaFun.setText(vSenha);
+
+
+						} 
+					}catch (SQLException exception) {
+					// TODO Auto-generated catch block
+					exception.printStackTrace();
+				}
+			}
+		});
+		btnPesquisarFun.setBounds(70, 51, 109, 21);
+		panelPesquisa_3.add(btnPesquisarFun);
+		
+		JButton btnExcluirFun = new JButton("Excluir");
+		btnExcluirFun.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				String id = pesquisaFun.getText();
+				
+				try {
+					pstm = conn.prepareStatement("DELETE FROM funcionarios WHERE id = ?");
+					pstm.setString(1, id);
+					
+					pstm.execute();
+					
+					pesquisaFun.setText("");
+					nomeFun.setText("");
+					cargoFun.setText("");
+					loginFun.setText("");
+					senhaFun.setText("");
+
+					
+					tabela_rolagemFuncionario();
+					} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnExcluirFun.setBounds(189, 51, 95, 21);
+		panelPesquisa_3.add(btnExcluirFun);
+		
+		JPanel panelDB_3 = new JPanel();
+		panelDB_3.setLayout(null);
+		panelDB_3.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Banco de Dados    ", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		panelDB_3.setBackground(new Color(128, 128, 192));
+		panelDB_3.setBounds(314, 11, 539, 433);
+		panel.add(panelDB_3);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(24, 28, 494, 380);
+		panelDB_3.add(scrollPane);
+		
+		tableFuncionarios = new JTable();
+		scrollPane.setViewportView(tableFuncionarios);
+		
+		JPanel panel_1 = new JPanel();
+		tabbedPane.addTab("Emprestimos", null, panel_1, null);
+		panel_1.setLayout(null);
+		
+		JPanel painelData_4 = new JPanel();
+		painelData_4.setLayout(null);
+		painelData_4.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Dados de registro   ", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		painelData_4.setBackground(new Color(128, 128, 192));
+		painelData_4.setBounds(10, 109, 294, 358);
+		panel_1.add(painelData_4);
+		
+		JLabel L_NomeEmp = new JLabel("Nome");
+		L_NomeEmp.setForeground(new Color(64, 0, 64));
+		L_NomeEmp.setFont(new Font("Arial", Font.BOLD, 14));
+		L_NomeEmp.setBounds(10, 30, 118, 23);
+		painelData_4.add(L_NomeEmp);
+		
+		nomeEmp = new JTextField();
+		nomeEmp.setColumns(10);
+		nomeEmp.setBounds(116, 33, 96, 19);
+		painelData_4.add(nomeEmp);
+		
+		JLabel L_DataEmp = new JLabel("Data Emp");
+		L_DataEmp.setForeground(new Color(64, 0, 64));
+		L_DataEmp.setFont(new Font("Arial", Font.BOLD, 14));
+		L_DataEmp.setBounds(10, 64, 118, 23);
+		painelData_4.add(L_DataEmp);
+		
+		dataEmp = new JTextField();
+		dataEmp.setColumns(10);
+		dataEmp.setBounds(116, 67, 96, 19);
+		painelData_4.add(dataEmp);
+		
+		JLabel L_DataDevoEmp = new JLabel("Data Dev");
+		L_DataDevoEmp.setForeground(new Color(64, 0, 64));
+		L_DataDevoEmp.setFont(new Font("Arial", Font.BOLD, 14));
+		L_DataDevoEmp.setBounds(10, 97, 118, 23);
+		painelData_4.add(L_DataDevoEmp);
+		
+		devEmp = new JTextField();
+		devEmp.setColumns(10);
+		devEmp.setBounds(116, 100, 96, 19);
+		painelData_4.add(devEmp);
+		
+		JLabel L_StatusEmp = new JLabel("Status");
+		L_StatusEmp.setForeground(new Color(64, 0, 64));
+		L_StatusEmp.setFont(new Font("Arial", Font.BOLD, 14));
+		L_StatusEmp.setBounds(10, 130, 118, 23);
+		painelData_4.add(L_StatusEmp);
+		
+		statusEmp = new JTextField();
+		statusEmp.setColumns(10);
+		statusEmp.setBounds(116, 133, 96, 19);
+		painelData_4.add(statusEmp);
+		
+		JButton btnSalvarEmp = new JButton("Salvar");
+		btnSalvarEmp.setBounds(10, 287, 85, 21);
+		painelData_4.add(btnSalvarEmp);
+		
+		JButton btnZerarEmp = new JButton("Zerar");
+		btnZerarEmp.setBounds(104, 286, 85, 21);
+		painelData_4.add(btnZerarEmp);
+		
+		JButton btnEditarEmp = new JButton("Editar");
+		btnEditarEmp.setBounds(199, 287, 85, 21);
+		painelData_4.add(btnEditarEmp);
+		
+		JButton btnDevolulo = new JButton("R. Dev");
+		btnDevolulo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				String id = IDdev.getText();
+				
+				String sql = "CALL RegistrarDevolucao(?);";
+			
+				try {
+					
+				} catch (Exception exception) {
+					
+				}
+			}
+		});
+		btnDevolulo.setBounds(10, 255, 85, 21);
+		painelData_4.add(btnDevolulo);
+		
+		JLabel L_StatusEmp_1 = new JLabel("ID Dev");
+		L_StatusEmp_1.setForeground(new Color(64, 0, 64));
+		L_StatusEmp_1.setFont(new Font("Arial", Font.BOLD, 14));
+		L_StatusEmp_1.setBounds(10, 221, 118, 23);
+		painelData_4.add(L_StatusEmp_1);
+		
+		IDdev = new JTextField();
+		IDdev.setColumns(10);
+		IDdev.setBounds(116, 224, 96, 19);
+		painelData_4.add(IDdev);
+		
+		diadevEmp = new JTextField();
+		diadevEmp.setColumns(10);
+		diadevEmp.setBounds(116, 167, 96, 19);
+		painelData_4.add(diadevEmp);
+		
+		JLabel L_StatusEmp_2 = new JLabel("Dia Dev");
+		L_StatusEmp_2.setForeground(new Color(64, 0, 64));
+		L_StatusEmp_2.setFont(new Font("Arial", Font.BOLD, 14));
+		L_StatusEmp_2.setBounds(10, 164, 118, 23);
+		painelData_4.add(L_StatusEmp_2);
+		
+		JButton btnREmp = new JButton("R. Emp");
+		btnREmp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnREmp.setBounds(104, 254, 85, 21);
+		painelData_4.add(btnREmp);
+		
+		JButton btnEmpDisp = new JButton("Emp Disp");
+		btnEmpDisp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnEmpDisp.setBounds(10, 319, 85, 21);
+		painelData_4.add(btnEmpDisp);
+		
+		JButton btnHistUsu = new JButton("Hist Usu");
+		btnHistUsu.setBounds(104, 318, 85, 21);
+		painelData_4.add(btnHistUsu);
+		
+		JButton btnHistVenc = new JButton("Hist Venc");
+		btnHistVenc.setBounds(199, 319, 85, 21);
+		painelData_4.add(btnHistVenc);
+		
+		JButton btnDevolulo_1_1 = new JButton("RollBack");
+		btnDevolulo_1_1.setBounds(199, 255, 85, 21);
+		painelData_4.add(btnDevolulo_1_1);
+		
+		JPanel panelPesquisa_4 = new JPanel();
+		panelPesquisa_4.setLayout(null);
+		panelPesquisa_4.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Pesquisa    ", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		panelPesquisa_4.setBackground(new Color(128, 128, 192));
+		panelPesquisa_4.setBounds(10, 11, 294, 87);
+		panel_1.add(panelPesquisa_4);
+		
+		JLabel L_Pesquisa_4 = new JLabel("Buscar");
+		L_Pesquisa_4.setForeground(new Color(64, 0, 64));
+		L_Pesquisa_4.setFont(new Font("Arial", Font.BOLD, 14));
+		L_Pesquisa_4.setBounds(10, 24, 50, 17);
+		panelPesquisa_4.add(L_Pesquisa_4);
+		
+		pesquisaEmp = new JTextField();
+		pesquisaEmp.setColumns(10);
+		pesquisaEmp.setBounds(70, 24, 214, 19);
+		panelPesquisa_4.add(pesquisaEmp);
+		
+		JButton btnPesquisarEmp = new JButton("Pesquisar");
+		btnPesquisarEmp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String id = pesquisaEmp.getText();
+				
+				String sql = "SELECT "
+					       + "usuarios.Nome, data_emprestimo, data_devolucao, status_emprestimo, dia_devolvido"
+					       + "FROM emprestimos "
+					       + "JOIN usuarios "
+					       + "ON emprestimos.id = usuarios.id "
+					       + "WHERE emprestimos.id = ?";
+				
+				String vNome, vEmprestimo, vDevolucao, vStatus, vDevolvido;
+				
+				try {
+					
+					//  data_emprestimo, data_devolucao, status_emprestimo, dia_devolvido
+					pstm = conn.prepareStatement(sql);
+					pstm.setString(1, id);
+					ResultSet rst = pstm.executeQuery();
+					tabela_rolagemEmprestimo();
+					
+					if(rst.next() == true) {
+						
+						vNome = rst.getString(1);
+						vEmprestimo = rst.getString(2);
+						vDevolucao = rst.getString(3);
+						vStatus = rst.getString(4);
+						vDevolvido = rst.getString(5);
+						
+						
+						nomeEmp.setText(vNome);
+						dataEmp.setText(vEmprestimo);
+						devEmp.setText(vDevolucao);
+						statusEmp.setText(vStatus);
+						diadevEmp.setText(vDevolvido);
+						
+
+					}	
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnPesquisarEmp.setBounds(70, 51, 109, 21);
+		panelPesquisa_4.add(btnPesquisarEmp);
+		
+		JButton btnExcluirEmp = new JButton("Excluir");
+		btnExcluirEmp.setBounds(189, 51, 95, 21);
+		panelPesquisa_4.add(btnExcluirEmp);
+		
+		JPanel panelDB_4 = new JPanel();
+		panelDB_4.setLayout(null);
+		panelDB_4.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "   Banco de Dados    ", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
+		panelDB_4.setBackground(new Color(128, 128, 192));
+		panelDB_4.setBounds(314, 11, 539, 456);
+		panel_1.add(panelDB_4);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(35, 31, 461, 374);
+		panelDB_4.add(scrollPane_1);
+		
+		tableEmprestimos = new JTable();
+		scrollPane_1.setViewportView(tableEmprestimos);
+		
+		JButton btnSair = new JButton("Sair");
+		btnSair.setBounds(20, 577, 85, 21);
+		frmGerenciamento.getContentPane().add(btnSair);
+		btnSair.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					conn.close();
+					pstm.close();
+					
+					System.exit(0);
+				} catch (Exception exception) {
+					exception.printStackTrace();
+					
+				}
+				
+				System.exit(0);
+				
+			}
+		});
+		btnExcluir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				String id = pesquisa.getText();
+				
+				try {
+					pstm = conn.prepareStatement("DELETE FROM livros WHERE id = ?");
+					pstm.setString(1, id);
+					
+					pstm.execute();
+					
+					titulo.setText("");
+					autor.setText("");
+					editora.setText("");
+					genero.setText("");
+					ano.setText("");
+					isbn.setText("");
+					quantidade.setText("");
+					
+					tabela_rolagemFuncionario();
+					} catch (SQLException exception) {
+						exception.printStackTrace();
+				}
+			}
+		});
+	}
+}
